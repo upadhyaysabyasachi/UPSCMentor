@@ -1,0 +1,80 @@
+# Core Framework
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# Database & ORM
+supabase
+postgrest
+psycopg2-binary
+
+# Vector Database & Embeddings
+pgvector
+sentence-transformers
+openai
+
+# Web Scraping & Crawling
+beautifulsoup4
+requests
+lxml
+selenium
+playwright
+feedparser
+aiohttp
+
+# LLM & AI
+langchain
+langchain-openai
+tiktoken
+groq  # Fast LLM inference with high rate limits
+
+# Social Media APIs
+#instagrapi
+tweepy
+python-telegram-bot
+
+# Email
+resend
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+authlib
+
+# Utilities
+python-dotenv
+python-dateutil
+pytz
+httpx
+
+# Task Scheduling
+apscheduler
+celery
+redis
+
+# Monitoring & Logging
+loguru
+sentry-sdk
+
+# Data Processing
+pandas
+numpy
+
+# Testing (optional but recommended)
+pytest
+pytest-asyncio
+pytest-cov
+httpx
+
+# Development Tools (optional)
+black
+flake8
+mypy
+# Logging (standard library, but mentioned in crawler)
+# No extra install needed for logging
+
+# File: docs/hindu_complete_crawler.py added
+# Requirements already included above
+email-validator
