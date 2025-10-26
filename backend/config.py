@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
+from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -44,7 +45,8 @@ class Settings(BaseSettings):
     ]
     
     class Config:
-        env_file = ".env"
+        # Look for .env in the parent directory (project root)
+        env_file = str(Path(__file__).parent.parent / ".env")
         case_sensitive = True
 
 
