@@ -384,9 +384,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
@@ -405,19 +403,7 @@ For questions or issues:
 - Check [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) for feature details
 - Open an issue on GitHub
 
-## 🗺️ Roadmap
 
-### Upcoming Features
-- [ ] Mobile application (React Native/Flutter)
-- [ ] Payment integration (Stripe)
-- [ ] Advanced analytics dashboard
-- [ ] AI study planner
-- [ ] Community features and discussion forums
-- [ ] Gamification system
-- [ ] Multi-language support
-- [ ] Video call integration for mentor sessions
-- [ ] Peer study groups
-- [ ] Push notifications
 
 ---
 
