@@ -18,6 +18,27 @@ from app.services.question_generation_service import question_generator
 router = APIRouter()
 
 
+def _normalize_options(options):
+    """
+    Normalize options to dict format.
+    Handles legacy list format: ["Option A", "Option B", ...] 
+    Converts to dict format: {"A": "Option A", "B": "Option B", ...}
+    """
+    if options is None:
+        return None
+    
+    if isinstance(options, dict):
+        # Already in correct format
+        return options
+    
+    if isinstance(options, list):
+        # Convert list to dict with A, B, C, D keys
+        labels = ["A", "B", "C", "D", "E", "F", "G", "H"]
+        return {labels[i]: option for i, option in enumerate(options) if i < len(labels)}
+    
+    return options
+
+
 @router.get("/", response_model=List[AssessmentResponse])
 async def list_assessments(
     current_user: User = Depends(get_current_user),
@@ -25,11 +46,52 @@ async def list_assessments(
 ):
     """List all assessments for current user"""
     
-    assessments = db.query(Assessment).filter(
-        Assessment.user_id == current_user.id
-    ).order_by(Assessment.created_at.desc()).all()
+    # Load assessments with questions using eager loading
+    assessments = (
+        db.query(Assessment)
+        .options(
+            joinedload(Assessment.questions).joinedload(AssessmentQuestion.question)
+        )
+        .filter(Assessment.user_id == current_user.id)
+        .order_by(Assessment.created_at.desc())
+        .all()
+    )
     
-    return assessments
+    # Format each assessment with its questions
+    formatted_assessments = []
+    for assessment in assessments:
+        assessment_dict = {
+            "id": assessment.id,
+            "user_id": assessment.user_id,
+            "subject": assessment.subject,
+            "topic": assessment.topic,
+            "difficulty_level": assessment.difficulty_level,
+            "status": assessment.status,
+            "created_at": assessment.created_at,
+            "completed_at": assessment.completed_at,
+            "total_score": assessment.total_score,
+            "time_taken_seconds": assessment.time_taken_seconds,
+            "questions": [
+                {
+                    "id": aq.question.id,
+                    "type": aq.question.type,
+                    "subject": aq.question.subject,
+                    "topic": aq.question.topic,
+                    "difficulty": aq.question.difficulty,
+                    "question_text": aq.question.question_text,
+                    "options": _normalize_options(aq.question.options),
+                    "correct_answer": aq.question.correct_answer,
+                    "rubric": aq.question.rubric,
+                    "max_marks": aq.question.max_marks,
+                    "source_reference": aq.question.source_reference,
+                    "created_at": aq.question.created_at
+                }
+                for aq in sorted(assessment.questions, key=lambda x: x.order)
+            ]
+        }
+        formatted_assessments.append(AssessmentResponse(**assessment_dict))
+    
+    return formatted_assessments
 
 
 @router.post("/", response_model=AssessmentResponse, status_code=status.HTTP_201_CREATED)
@@ -177,7 +239,7 @@ async def get_assessment(
                 "topic": aq.question.topic,
                 "difficulty": aq.question.difficulty,
                 "question_text": aq.question.question_text,
-                "options": aq.question.options,
+                "options": _normalize_options(aq.question.options),
                 "correct_answer": aq.question.correct_answer,
                 "rubric": aq.question.rubric,
                 "max_marks": aq.question.max_marks,
@@ -242,8 +304,8 @@ def _create_sample_questions(db: Session, subject: str, topic: str, difficulty: 
             topic=topic,
             difficulty=difficulty,
             question_text=f"Which of the following is a key characteristic of {topic}?",
-            options=["Option A", "Option B", "Option C", "Option D"],
-            correct_answer="Option B",
+            options={"A": "Option A", "B": "Option B", "C": "Option C", "D": "Option D"},
+            correct_answer="B",
             max_marks=1
         ),
         Question(
@@ -252,8 +314,8 @@ def _create_sample_questions(db: Session, subject: str, topic: str, difficulty: 
             topic=topic,
             difficulty=difficulty,
             question_text=f"What was the primary cause of developments in {topic}?",
-            options=["Economic factors", "Political factors", "Social factors", "All of the above"],
-            correct_answer="All of the above",
+            options={"A": "Economic factors", "B": "Political factors", "C": "Social factors", "D": "All of the above"},
+            correct_answer="D",
             max_marks=1
         ),
         # Subjective Questions

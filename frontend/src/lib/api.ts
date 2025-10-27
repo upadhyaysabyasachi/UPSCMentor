@@ -75,15 +75,15 @@ export const authApi = {
 
 // Assessment API
 export const assessmentApi = {
-  list: () => api.get('/assessments'),
+  list: () => api.get('/assessments/'),
   
   create: (data: { subject: string; topic: string; difficulty_level: string }) =>
-    api.post('/assessments', data),
+    api.post('/assessments/', data),
   
-  getById: (id: string) => api.get(`/assessments/${id}`),
+  getById: (id: string) => api.get(`/assessments/${id}/`),
   
   submit: (id: string, responses: any[]) =>
-    api.post(`/assessments/${id}/submit`, { responses }),
+    api.post(`/assessments/${id}/submit/`, { responses }),
 }
 
 // Evaluation API
